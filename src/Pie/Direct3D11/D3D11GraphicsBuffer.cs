@@ -48,7 +48,7 @@ internal sealed class D3D11GraphicsBuffer : GraphicsBuffer
         BufferDescription description = new BufferDescription()
         {
             BindFlags = flags,
-            ByteWidth = (int) sizeInBytes,
+            ByteWidth = sizeInBytes,
             Usage = dynamic ? ResourceUsage.Dynamic : ResourceUsage.Default,
             CPUAccessFlags = dynamic ? CpuAccessFlags.Write : CpuAccessFlags.None
         };

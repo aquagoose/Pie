@@ -189,7 +189,7 @@ internal sealed class NullGraphicsDevice : GraphicsDevice
     {
     }
 
-    public override void SetDepthStencilState(DepthStencilState state, int stencilRef)
+    public override void SetDepthStencilState(DepthStencilState state, uint stencilRef)
     {
     }
 

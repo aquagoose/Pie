@@ -302,12 +302,12 @@ internal sealed unsafe class GlGraphicsDevice : GraphicsDevice
         ((GlBlendState) state).Set();
     }
 
-    public override void SetDepthStencilState(DepthStencilState state, int stencilRef)
+    public override void SetDepthStencilState(DepthStencilState state, uint stencilRef)
     {
         if (_currentDStencilState != null && _currentDStencilState.Equals(state))
             return;
         _currentDStencilState = state;
-        ((GlDepthStencilState) state).Set(stencilRef);
+        ((GlDepthStencilState) state).Set((int) stencilRef);
     }
 
     public override void SetPrimitiveType(PrimitiveType type)

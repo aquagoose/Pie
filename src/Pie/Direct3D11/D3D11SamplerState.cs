@@ -33,7 +33,7 @@ internal sealed class D3D11SamplerState : SamplerState
             AddressV = GetAddressModeFromTextureAddress(description.AddressV),
             AddressW = GetAddressModeFromTextureAddress(description.AddressW),
             MipLODBias = 0,
-            MaxAnisotropy = description.MaxAnisotropy,
+            MaxAnisotropy = (uint) description.MaxAnisotropy,
             ComparisonFunc = Vortice.Direct3D11.ComparisonFunction.LessEqual,
             MinLOD = description.MinLOD,
             MaxLOD = description.MaxLOD,

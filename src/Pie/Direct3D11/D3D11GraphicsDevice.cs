@@ -53,7 +53,7 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
         {
             Flags = SwapChainFlags.AllowTearing | SwapChainFlags.AllowModeSwitch,
             BufferCount = 2,
-            BufferDescription = new ModeDescription(winSize.Width, winSize.Height, format: _colorFormat),
+            BufferDescription = new ModeDescription((uint) winSize.Width, (uint) winSize.Height, format: _colorFormat),
             BufferUsage = Usage.RenderTargetOutput,
             OutputWindow = hwnd,
             SampleDescription = new SampleDescription(1, 0),
@@ -295,8 +295,8 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
     public override void SetTexture(uint bindingSlot, Texture texture, SamplerState state)
     {
         D3D11Texture tex = (D3D11Texture) texture;
-        _context.PSSetShaderResource((int) bindingSlot, tex.View);
-        _context.PSSetSampler((int) bindingSlot, ((D3D11SamplerState) state).State);
+        _context.PSSetShaderResource(bindingSlot, tex.View);
+        _context.PSSetSampler(bindingSlot, ((D3D11SamplerState) state).State);
     }
 
     public override void SetRasterizerState(RasterizerState state)
@@ -309,7 +309,7 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
         _context.OMSetBlendState(((D3D11BlendState) state).State, null, uint.MaxValue);
     }
 
-    public override void SetDepthStencilState(DepthStencilState state, int stencilRef)
+    public override void SetDepthStencilState(DepthStencilState state, uint stencilRef)
     {
         _context.OMSetDepthStencilState(((D3D11DepthStencilState) state).State, stencilRef);
     }
@@ -340,7 +340,7 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
 
     public override void SetVertexBuffer(uint slot, GraphicsBuffer buffer, uint stride)
     {
-        _context.IASetVertexBuffer((int) slot, ((D3D11GraphicsBuffer) buffer).Buffer, (int) stride, 0);
+        _context.IASetVertexBuffer(slot, ((D3D11GraphicsBuffer) buffer).Buffer, stride, 0);
     }
 
     public override void SetIndexBuffer(GraphicsBuffer buffer, IndexType type)
@@ -358,10 +358,10 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
     public override void SetUniformBuffer(uint bindingSlot, GraphicsBuffer buffer)
     {
         D3D11GraphicsBuffer buf = (D3D11GraphicsBuffer) buffer;
-        _context.VSSetConstantBuffer((int) bindingSlot, buf.Buffer);
-        _context.PSSetConstantBuffer((int) bindingSlot, buf.Buffer);
-        _context.GSSetConstantBuffer((int) bindingSlot, buf.Buffer);
-        _context.CSSetConstantBuffer((int) bindingSlot, buf.Buffer);
+        _context.VSSetConstantBuffer(bindingSlot, buf.Buffer);
+        _context.PSSetConstantBuffer(bindingSlot, buf.Buffer);
+        _context.GSSetConstantBuffer(bindingSlot, buf.Buffer);
+        _context.CSSetConstantBuffer(bindingSlot, buf.Buffer);
     }
 
     public override void SetFramebuffer(Framebuffer framebuffer)
@@ -378,42 +378,42 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
 
     public override void Draw(uint vertexCount)
     {
-        _context.Draw((int) vertexCount, 0);
+        _context.Draw(vertexCount, 0);
         PieMetrics.DrawCalls++;
         PieMetrics.TriCount += vertexCount / 3;
     }
 
     public override void Draw(uint vertexCount, int startVertex)
     {
-        _context.Draw((int) vertexCount, startVertex);
+        _context.Draw(vertexCount, (uint) startVertex);
         PieMetrics.DrawCalls++;
         PieMetrics.TriCount += vertexCount/ 3;
     }
 
     public override void DrawIndexed(uint indexCount)
     {
-        _context.DrawIndexed((int) indexCount, 0, 0);
+        _context.DrawIndexed(indexCount, 0, 0);
         PieMetrics.DrawCalls++;
         PieMetrics.TriCount += indexCount / 3;
     }
 
     public override void DrawIndexed(uint indexCount, int startIndex)
     {
-        _context.DrawIndexed((int) indexCount, startIndex, 0);
+        _context.DrawIndexed(indexCount, (uint) startIndex, 0);
         PieMetrics.DrawCalls++;
         PieMetrics.TriCount += indexCount/ 3;
     }
 
     public override void DrawIndexed(uint indexCount, int startIndex, int baseVertex)
     {
-        _context.DrawIndexed((int) indexCount, startIndex, baseVertex);
+        _context.DrawIndexed(indexCount, (uint) startIndex, baseVertex);
         PieMetrics.DrawCalls++;
         PieMetrics.TriCount += indexCount/ 3;
     }
 
     public override void DrawIndexedInstanced(uint indexCount, uint instanceCount)
     {
-        _context.DrawIndexedInstanced((int) indexCount, (int) instanceCount, 0, 0, 0);
+        _context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
         PieMetrics.TriCount += indexCount / 3 * instanceCount;
         PieMetrics.DrawCalls++;
     }
@@ -424,7 +424,7 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
 
         if (swapInterval == 0)
             flags |= PresentFlags.AllowTearing;
-        _swapChain.Present(swapInterval, flags);
+        _swapChain.Present((uint) swapInterval, flags);
         // ?????? This only seems to happen on AMD but after presentation the render targets go off to floaty land
         // I'm sure usually this is resolved by setting render targets at the start of a frame (like what Easel does)
         // but Pie has no way of knowing when the start of a frame is, so just do it at the end of presentation.
@@ -447,7 +447,7 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
             _depthStencilTexture.Dispose();
         }
 
-        _swapChain.ResizeBuffers(0, newSize.Width, newSize.Height, Vortice.DXGI.Format.Unknown,
+        _swapChain.ResizeBuffers(0, (uint) newSize.Width, (uint) newSize.Height, Vortice.DXGI.Format.Unknown,
             SwapChainFlags.AllowTearing | SwapChainFlags.AllowModeSwitch);
         _colorTexture = _swapChain.GetBuffer<ID3D11Texture2D>(0);
         _colorTargetView = _device.CreateRenderTargetView(_colorTexture);
@@ -463,7 +463,7 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
 
     public override void Dispatch(uint groupCountX, uint groupCountY, uint groupCountZ)
     {
-        _context.Dispatch((int) groupCountX, (int) groupCountY, (int) groupCountZ);
+        _context.Dispatch(groupCountX, groupCountY, groupCountZ);
     }
 
     public override void Flush()
@@ -487,8 +487,8 @@ internal sealed unsafe class D3D11GraphicsDevice : GraphicsDevice
         Texture2DDescription texDesc = new Texture2DDescription()
         {
             Format = _depthFormat.Value,
-            Width = size.Width,
-            Height = size.Height,
+            Width = (uint) size.Width,
+            Height = (uint) size.Height,
             ArraySize = 1,
             MipLevels = 1,
             BindFlags = BindFlags.DepthStencil,

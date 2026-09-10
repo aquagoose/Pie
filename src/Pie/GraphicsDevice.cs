@@ -344,7 +344,7 @@ public abstract class GraphicsDevice : IDisposable
     /// </summary>
     /// <param name="state">The depth-stencil state to use.</param>
     /// <param name="stencilRef">The reference value to perform against when performing a stencil test.</param>
-    public abstract void SetDepthStencilState(DepthStencilState state, int stencilRef = 0);
+    public abstract void SetDepthStencilState(DepthStencilState state, uint stencilRef = 0);
 
     /// <summary>
     /// Set the primitive type that will be used on next draw.

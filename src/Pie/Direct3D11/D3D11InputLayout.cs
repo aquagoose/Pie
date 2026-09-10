@@ -16,7 +16,7 @@ internal sealed class D3D11InputLayout : InputLayout
             "The given shader object does not have a valid vertex shader. An input layout requires a valid vertex shader.");
         
         InputElementDescription[] iedesc = new InputElementDescription[descriptions.Length];
-        for (int i = 0; i < iedesc.Length; i++)
+        for (uint i = 0; i < iedesc.Length; i++)
         {
             ref InputElementDescription d = ref iedesc[i];
             ref InputLayoutDescription desc = ref descriptions[i];
@@ -27,11 +27,11 @@ internal sealed class D3D11InputLayout : InputLayout
             {
                 SemanticName = "TEXCOORD",
                 SemanticIndex = i,
-                AlignedByteOffset = (int) desc.Offset,
+                AlignedByteOffset = desc.Offset,
                 Format = fmt,
-                Slot = (int) desc.Slot,
+                Slot = desc.Slot,
                 Classification = (InputClassification) desc.InputType,
-                InstanceDataStepRate = (int) desc.InputType
+                InstanceDataStepRate = (uint) desc.InputType
             };
         }
 

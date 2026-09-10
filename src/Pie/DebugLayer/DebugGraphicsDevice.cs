@@ -238,7 +238,7 @@ internal sealed unsafe class DebugGraphicsDevice : GraphicsDevice
         Device.SetBlendState(((DebugBlendState) state).BlendState);
     }
 
-    public override void SetDepthStencilState(DepthStencilState state, int stencilRef = 0)
+    public override void SetDepthStencilState(DepthStencilState state, uint stencilRef = 0)
     {
         if (state.IsDisposed)
             PieLog.Log(LogType.Critical, "Attempted to set a disposed depth stencil state!");

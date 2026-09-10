@@ -62,10 +62,10 @@ internal sealed unsafe class D3D11Texture : Texture
             case TextureType.Texture1D:
                 Texture1DDescription desc1d = new Texture1DDescription()
                 {
-                    Width = description.Width,
+                    Width = (uint) description.Width,
                     Format = fmt,
-                    MipLevels = mipLevels,
-                    ArraySize = description.ArraySize,
+                    MipLevels = (uint) mipLevels,
+                    ArraySize = (uint) description.ArraySize,
                     Usage = ResourceUsage.Default,
                     BindFlags = flags,
                     CPUAccessFlags = CpuAccessFlags.None,
@@ -79,7 +79,7 @@ internal sealed unsafe class D3D11Texture : Texture
                     svDesc.ViewDimension = ShaderResourceViewDimension.Texture1D;
                     svDesc.Texture1D = new Texture1DShaderResourceView()
                     {
-                        MipLevels = -1,
+                        MipLevels = unchecked((uint) -1),
                         MostDetailedMip = 0
                     };
                 }
@@ -88,9 +88,9 @@ internal sealed unsafe class D3D11Texture : Texture
                     svDesc.ViewDimension = ShaderResourceViewDimension.Texture1DArray;
                     svDesc.Texture1DArray = new Texture1DArrayShaderResourceView()
                     {
-                        ArraySize = description.ArraySize,
+                        ArraySize = (uint) description.ArraySize,
                         FirstArraySlice = 0,
-                        MipLevels = -1,
+                        MipLevels = unchecked((uint) -1),
                         MostDetailedMip = 0
                     };
                 }
@@ -99,11 +99,11 @@ internal sealed unsafe class D3D11Texture : Texture
             case TextureType.Texture2D:
                 Texture2DDescription desc2d = new Texture2DDescription()
                 {
-                    Width = description.Width,
-                    Height = description.Height,
+                    Width = (uint) description.Width,
+                    Height = (uint) description.Height,
                     Format = fmt,
-                    MipLevels = mipLevels,
-                    ArraySize = description.ArraySize,
+                    MipLevels = (uint) mipLevels,
+                    ArraySize = (uint) description.ArraySize,
                     SampleDescription = new SampleDescription(1, 0),
                     //Usage = description.Dynamic ? ResourceUsage.Dynamic : ResourceUsage.Default,
                     Usage = ResourceUsage.Default,
@@ -119,7 +119,7 @@ internal sealed unsafe class D3D11Texture : Texture
                     svDesc.ViewDimension = ShaderResourceViewDimension.Texture2D;
                     svDesc.Texture2D = new Texture2DShaderResourceView()
                     {
-                        MipLevels = -1,
+                        MipLevels = unchecked((uint) -1),
                         MostDetailedMip = 0
                     };
                 }
@@ -128,9 +128,9 @@ internal sealed unsafe class D3D11Texture : Texture
                     svDesc.ViewDimension = ShaderResourceViewDimension.Texture2DArray;
                     svDesc.Texture2DArray = new Texture2DArrayShaderResourceView()
                     { 
-                        MipLevels = -1,
+                        MipLevels = unchecked((uint) -1),
                         MostDetailedMip = 0,
-                        ArraySize = description.ArraySize,
+                        ArraySize = (uint) description.ArraySize,
                         FirstArraySlice = 0
                     };
                 }
@@ -139,11 +139,11 @@ internal sealed unsafe class D3D11Texture : Texture
             case TextureType.Texture3D:
                 Texture3DDescription desc3d = new Texture3DDescription()
                 {
-                    Width = description.Width,
-                    Height = description.Height,
-                    Depth = description.Depth,
+                    Width = (uint) description.Width,
+                    Height = (uint) description.Height,
+                    Depth = (uint) description.Depth,
                     Format = fmt,
-                    MipLevels = mipLevels,
+                    MipLevels = (uint) mipLevels,
                     Usage = ResourceUsage.Default,
                     BindFlags = flags,
                     CPUAccessFlags = CpuAccessFlags.None,
@@ -157,7 +157,7 @@ internal sealed unsafe class D3D11Texture : Texture
                     svDesc.ViewDimension = ShaderResourceViewDimension.Texture3D;
                     svDesc.Texture3D = new Texture3DShaderResourceView()
                     {
-                        MipLevels = -1,
+                        MipLevels = unchecked((uint) -1),
                         MostDetailedMip = 0
                     };
                 }
@@ -167,11 +167,11 @@ internal sealed unsafe class D3D11Texture : Texture
             case TextureType.Cubemap:
                 Texture2DDescription desc2dcube = new Texture2DDescription()
                 {
-                    Width = description.Width,
-                    Height = description.Height,
+                    Width = (uint) description.Width,
+                    Height = (uint) description.Height,
                     Format = fmt,
-                    MipLevels = mipLevels,
-                    ArraySize = description.ArraySize * 6, // Multiply by 6 for cubemap
+                    MipLevels = (uint) mipLevels,
+                    ArraySize = (uint) description.ArraySize * 6, // Multiply by 6 for cubemap
                     SampleDescription = new SampleDescription(1, 0),
                     Usage = ResourceUsage.Default,
                     BindFlags = flags,
@@ -186,7 +186,7 @@ internal sealed unsafe class D3D11Texture : Texture
                     svDesc.ViewDimension = ShaderResourceViewDimension.TextureCube;
                     svDesc.TextureCube = new TextureCubeShaderResourceView()
                     {
-                        MipLevels = -1,
+                        MipLevels = unchecked((uint) -1),
                         MostDetailedMip = 0
                     };
                 }
@@ -221,8 +221,8 @@ internal sealed unsafe class D3D11Texture : Texture
                     int depthPitch = PieUtils.CalculatePitch(description.Format, depth, out _);
 
                     context.UpdateSubresource(Texture,
-                        (int) DxUtils.CalcSubresource((uint) i, (uint) a, (uint) mipLevels), null,
-                        (IntPtr) ((byte*) data + currentOffset), rowPitch, depthPitch);
+                        DxUtils.CalcSubresource((uint) i, (uint) a, (uint) mipLevels), null,
+                        (IntPtr) ((byte*) data + currentOffset), (uint) rowPitch, (uint) depthPitch);
 
                     currentOffset += currSize;
 
@@ -261,7 +261,7 @@ internal sealed unsafe class D3D11Texture : Texture
 
         Box box = new Box(x, y, z, x + width, y + height, z + depth + 1);
         
-        _context.UpdateSubresource(Texture, (int) subresource, box, (IntPtr) data, rowPitch, depthPitch);
+        _context.UpdateSubresource(Texture, subresource, box, (IntPtr) data, (uint) rowPitch, (uint) depthPitch);
     }
 
     public override void Dispose()
